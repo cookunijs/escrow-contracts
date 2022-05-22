@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
@@ -22,6 +23,7 @@ abstract contract MarketTransfer is
     AdminController
 {
     using Address for address;
+    using SafeERC20 for IERC20;
 
     mapping(bytes4 => address) private _proxies;
 
@@ -99,13 +101,7 @@ abstract contract MarketTransfer is
         address to,
         uint256 value
     ) private {
-        IERC20 erc20 = IERC20(token);
-        if (from == address(this)) {
-            erc20.approve(to, value);
-            erc20.transfer(to, value);
-        } else {
-            erc20.transferFrom(from, to, value);
-        }
+        IERC20(token).safeTransferFrom(from, to, value);
     }
 
     function _erc721safeTransferFrom(
