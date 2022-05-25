@@ -101,7 +101,11 @@ abstract contract MarketTransfer is
         address to,
         uint256 value
     ) private {
-        IERC20(token).safeTransferFrom(from, to, value);
+        if (from == address(this)) {
+            IERC20(token).safeTransfer(to, value);
+        } else {
+            IERC20(token).safeTransferFrom(from, to, value);
+        }
     }
 
     function _erc721safeTransferFrom(
